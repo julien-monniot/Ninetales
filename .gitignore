@@ -1,0 +1,33 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+#*.dylib
+#*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+#*.lai
+#*.la
+#*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+ninetales
+
+# Backup files
+*~
+
+# Misc
+scripts_notes
