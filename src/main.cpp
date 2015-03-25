@@ -8,7 +8,8 @@
 // ---------------------------------------------
 
 // Inlude project
-#include "client.h"
+#include "client/client.h"
+//#include "debugger.h"
 
 // include system
 #include <iostream>
