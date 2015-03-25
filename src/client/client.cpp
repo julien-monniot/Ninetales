@@ -33,20 +33,24 @@ bool Client::ConnectInterface()
         return false;
     }
 
-    std::cout << "File /dev/net/tun openned" << std::endl;
+    std::cout << "File " << clonedev << " opened" << std::endl;
 
     memset(&ifr, 0, sizeof(ifr));
 
     ifr.ifr_flags = flags;
     
-    try {
+    try 
+    {
         if (sizeof(iname.c_str()) > IFNAMSIZ)
         {
             throw new std::string("Erreur : interface name too long");
-        } else {
+        } else 
+	{
            snprintf(ifr.ifr_name, IFNAMSIZ,  iname.c_str());
         }
-    } catch ( std::string str ) {
+    } 
+    catch ( std::string str ) 
+    {
         std::cerr << str << std::endl;
         return false;
     }
