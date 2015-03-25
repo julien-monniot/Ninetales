@@ -12,7 +12,7 @@ CFLAGS=-Wall -Wextra -Wmissing-braces -pedantic -Wunused
 INCLUDE=-I"./"
 
 
-CPPFILES=main.cpp
+CPPFILES=main.cpp client.cpp
 
 OBJ=$(CPPFILES:.cpp=.o)
 OBJS=$(addprefix $(OBJDIR)/,$(OBJ))
