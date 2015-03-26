@@ -4,7 +4,7 @@
 #    The project directories:
 DIRECTORIES=client/ server/ encryption/ utils/
 #    The project cpp files:
-CPPFILES=main.cpp client/client.cpp utils/printer.cpp utils/utils.cpp
+CPPFILES=main.cpp client/client.cpp
 #    The libraries includes (-I):
 LIBS_INCLUDES=
 #    The libraries (-L and -l):
@@ -13,8 +13,8 @@ LIBS=
 # Directories
 CURRENT_DIRECTORY=./
 SRCDIR=$(CURRENT_DIRECTORY)src/
-BINDIR=$(CURRENT_DIRECTORY)src/bin/
-OBJDIR=$(CURRENT_DIRECTORY)src/obj/
+BINDIR=$(CURRENT_DIRECTORY)bin/
+OBJDIR=$(CURRENT_DIRECTORY)obj/
 
 SRCDIRS=$(DIRECTORIES:%=$(SRCDIR)%)
 OBJDIRS=$(DIRECTORIES:%=$(OBJDIR)%)
@@ -41,7 +41,7 @@ FLAGS=-O2
 
 # Rules
 
-.PHONY: executable $(DEBUG_MODE) $(CLEAN_MODE) directories
+.PHONY: executable $(DEBUG_MODE) $(CLEAN_MODE) directories pre_edl post_edl
 
 all: executable
 
