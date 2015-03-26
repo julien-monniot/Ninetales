@@ -13,7 +13,7 @@
 
 #include "printer.h"
 #include "printer_config.h"
-#include "../utils.h"
+#include "utils.h"
 
 using std::cout;
 using std::endl;
@@ -99,47 +99,5 @@ void Printer::printString(int count, ...)
     for(j = 0; j < count; j++)
         cout << va_arg(ap, char*); 
     va_end(ap);
-}
-
-std::string Printer::selectStyle(const std::string keyword) const
-{
-	if(!keyword.compare(KEYWORD_VAR)) {
-		return STYLE_VAR;
-	} else if(!keyword.compare(KEYWORD_CONST)) {
-		return STYLE_CONST;
-	} else if(!keyword.compare(KEYWORD_VALUE)) {
-		return STYLE_VALUE;
-	} else if(!keyword.compare(KEYWORD_EQ)) {
-		return STYLE_EQ;
-	} else if(!keyword.compare(KEYWORD_PLUS)) {
-		return STYLE_PLUS;
-	} else if(!keyword.compare(KEYWORD_MINUS)) {
-		return STYLE_MINUS;
-	} else if(!keyword.compare(KEYWORD_MULT)) {
-		return STYLE_MULT;
-	} else if(!keyword.compare(KEYWORD_DIV)) {
-		return STYLE_DIV;
-	} else if(!keyword.compare(KEYWORD_LPAR)) {
-		return STYLE_LPAR;
-	} else if(!keyword.compare(KEYWORD_RPAR)) {
-		return STYLE_RPAR;
-	} else if(!keyword.compare(KEYWORD_ASSIGN)) {
-		return STYLE_ASSIGN;
-	} else if(!keyword.compare(KEYWORD_READ)) {
-		return STYLE_READ;
-	} else if(!keyword.compare(KEYWORD_WRITE)) {
-		return STYLE_WRITE;
-	} else if(!keyword.compare(KEYWORD_END)) {
-		return STYLE_END;
-	} else if(!keyword.compare(KEYWORD_SPACE)) {
-		return STYLE_SPACE;
-	} else if(!keyword.compare(KEYWORD_DOT)) {
-		return STYLE_DOT;
-	} else if(!keyword.compare(KEYWORD_COMA)) {
-		return STYLE_COMA;
-	} else {
-		return STYLE_OTHER;
-	}
-	return STYLE_OTHER;
 }
 

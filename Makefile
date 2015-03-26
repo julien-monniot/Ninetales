@@ -4,7 +4,7 @@
 #    The project directories:
 DIRECTORIES=client/ server/ encryption/ utils/
 #    The project cpp files:
-CPPFILES=main.cpp client/client.cpp
+CPPFILES=main.cpp client/client.cpp utils/printer.cpp utils/utils.cpp
 #    The libraries includes (-I):
 LIBS_INCLUDES=
 #    The libraries (-L and -l):
@@ -41,24 +41,36 @@ FLAGS=-O2
 
 # Rules
 
+.PHONY: executable $(DEBUG_MODE) $(CLEAN_MODE) directories
+
 all: executable
 
 #    Debug mode
 $(DEBUG_MODE): FLAGS += $(DEBUGFLAGS)
 $(DEBUG_MODE): executable
 
-#    Default mode
-executable: $(OBJ_BUILD)
-	$(GPP) $(CFLAGS) $(FLAGS) -o $(BIN) $(OBJFILES) $(LIBS)
-
 #    Clean mode
 $(CLEAN_MODE):
 	rm -rf $(OBJDIR)
-
-$(SRCDIR)%.o: $(SRCDIR)%.cpp
-	$(GPP) $(CFLAGS) $(FLAGS) $(INCDIRS) -c -o $(OBJDIR)$*.o $(SRCDIR)$*.cpp
+	
+#    Default mode
+executable: directories $(OBJ_BUILD)
+	@echo -e "\n============================= EDITION DES LIENS ================================\n\n"
+	@$(GPP) $(CFLAGS) $(FLAGS) -o $(BIN) $(OBJFILES) $(LIBS)
+	@echo -e " ## Edition des liens terminée avec succès !\n"
+	@echo -e "\n ####     Exécutable généré : \"$(BIN)\"     #### \n"
 
 #    Ensure the presence of the directories
-all:
-	mkdir -p $(OBJDIRS)
-	mkdir -p $(BINDIR)
+directories:
+	@mkdir -p $(OBJDIRS)
+	@mkdir -p $(BINDIR)
+	@echo -e "\n================================ COMPILATION ===================================\n"
+
+
+pre_edl:
+
+post_edl:
+
+$(SRCDIR)%.o: $(SRCDIR)%.cpp
+	@echo -e "\n ## Compilation de $*.cpp\n"
+	@$(GPP) $(CFLAGS) $(FLAGS) $(INCDIRS) -c -o $(OBJDIR)$*.o $(SRCDIR)$*.cpp

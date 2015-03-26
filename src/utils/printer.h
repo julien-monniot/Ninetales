@@ -17,7 +17,6 @@ class Printer // TODO messages buffer
 {
 private:
 	void printString(int count, ...); 	// with count the number of arguments
-    std::string selectStyle(const std::string keyword) const;
 protected:
 public:
     Printer();

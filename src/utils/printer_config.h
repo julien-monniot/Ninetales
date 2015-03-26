@@ -10,7 +10,6 @@
 // http://en.wikipedia.org/wiki/ANSI_escape_code
 // http://ascii-table.com/ansi-escape-sequences.php
 
-#include "keywords.h"
 
 // ================================ MESSAGES STYLES
 
@@ -39,28 +38,6 @@ const std::string STYLE_MAGEN = 	"\033[0;35m"; 	// Magenta
 const std::string STYLE_MAGEN_B = 	"\033[1;35m"; 	// Magenta bold
 const std::string STYLE_CYAN = 		"\033[0;36m"; 	// Cyan	
 const std::string STYLE_CYAN_B =	"\033[1;36m"; 	// Cyan bold
-
-// ================================ KEYWORDS STYLES
-
-const std::string STYLE_VAR = 		STYLE_YELLOW_B;
-const std::string STYLE_CONST = 	STYLE_YELLOW_B;
-const std::string STYLE_VALUE = 	STYLE_YELLOW_B; // not a real keyword XXX
-const std::string STYLE_EQ = 		STYLE_YELLOW;
-const std::string STYLE_PLUS = 		STYLE_YELLOW;
-const std::string STYLE_MINUS = 	STYLE_YELLOW;
-const std::string STYLE_MULT = 		STYLE_YELLOW;
-const std::string STYLE_DIV = 		STYLE_YELLOW;
-const std::string STYLE_LPAR = 		STYLE_YELLOW;
-const std::string STYLE_RPAR = 		STYLE_YELLOW;
-const std::string STYLE_ASSIGN = 	STYLE_RED_B;
-const std::string STYLE_READ = 		STYLE_RED_B;
-const std::string STYLE_WRITE = 	STYLE_RED_B;
-const std::string STYLE_END = 		STYLE_WHITE;
-const std::string STYLE_SPACE = 	STYLE_CYAN;		// ... just in case we change the spacing character
-const std::string STYLE_DOT = 		STYLE_YELLOW;
-const std::string STYLE_COMA = 		STYLE_RED;
-const std::string STYLE_OTHER = 	STYLE_WHITE;
-const std::string STYLE_NUM = 		STYLE_GREEN_B;
 
 // ================================ MESSAGES
 
