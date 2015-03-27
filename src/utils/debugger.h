@@ -1,36 +1,25 @@
-// ---------------------------------------------
-//  debugger.h
-//
-//	Created	 :
-//		by 	 : Samuel MAGNAN
-//		date : 18/03/2015
-//
-// ---------------------------------------------
-
-#include "printer.h"
+#include "printer_config.h"
 
 #include <iostream>
 
-extern Printer global_debug_printer;
-
 #ifdef DEBUG
 #define DEBUGERR(err) \
-    std::cerr << STYLE_ERR_T << "ERR [Debug]:" \
+    std::cerr << STYLE_ERR_T << "[Debug]: " \
     << STYLE_ERR << err \
     << std::endl << STYLE_DEFAULT;
 #define DEBUGWARN(warn) \
-    std::cerr << STYLE_WARN_T << "WARN [Debug]:" \
+    std::cerr << STYLE_WARN_T << "[Debug]: " \
     << STYLE_WARN << warn \
     << std::endl << STYLE_DEFAULT;
 #define DEBUGINFO(info) \
-    std::cout << STYLE_INFO_T << "INFO [Debug]:" \
+    std::cout << STYLE_INFO_T << "[Debug]: " \
     << STYLE_INFO << info \
     << std::endl << STYLE_DEFAULT;
-#define TRACE(flux) \
+#define DEBUGTRACE(flux) \
     std::cout << flux;
 #else
 #define DEBUGERR(err)
 #define DEBUGWARN(warn)
 #define DEBUGINFO(info)
-#define TRACE(flux)
+#define DEBUGTRACE(flux)
 #endif

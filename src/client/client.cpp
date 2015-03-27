@@ -1,8 +1,3 @@
-/*********************************
- *     VPN Client - Tun/Tap      *
- *      Created 25/03            *
- *      Author : JM              *
- * ******************************/
 #include "client.h"
 
 
