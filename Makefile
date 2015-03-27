@@ -8,7 +8,7 @@ CPPFILES=main.cpp client/client.cpp utils/argsmanager.cpp
 #    The libraries includes (-I):
 LIBS_INCLUDES=
 #    The libraries (-L and -l):
-LIBS=
+LIBS=-L"/usr/lib" -lboost_program_options
 
 # Directories
 CURRENT_DIRECTORY=./

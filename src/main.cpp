@@ -12,6 +12,7 @@
 #include "utils/debugger.h"
 #include "utils/utils.h"
 #include "utils/conf_files.h"
+#include "utils/argsmanager.h"
 
 // include system
 #include <stdlib.h>
@@ -28,6 +29,8 @@
 
 int initialize()
 {
+    DISPLAY("INIT", "Initialization starting...")
+    
     //// Allow IP forward (TODO: reset the default value when user specifies it)
     // By default, most of the linux distributions don't allow it.
     // It is required as we will route our packages throught the PPP interface.
@@ -66,22 +69,29 @@ int initialize()
     stunnel_conf_file.close();
     DISPLAY("INIT", " . . . success")
     
-
+    DISPLAY("INIT", "Initialization terminated !")
+    
     return EXIT_SUCCESS;
 }
 
 int main( int argc, const char* argv[] )
 {
+    ArgsManager am(argc, argv);
+    
+    if (am.isError())
+    {
+        std::cout << am << std::endl;
+        return EXIT_FAILURE;
+    }
+    
     TRACE("Ninetales - Another VPN Program\n")
     
-    DISPLAY("INIT", "Initialization starting...")
-    if (initialize())
+    if (am.count("init") && initialize())
     {
         DISPLAY("INIT", " . . . fail")
         DEBUGERR("A problem occured in the initialization")
         return EXIT_FAILURE;
     }
-    DISPLAY("INIT", "Initialization terminated !")
     
 }
 
