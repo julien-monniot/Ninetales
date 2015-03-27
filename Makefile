@@ -4,7 +4,7 @@
 #    The project directories:
 DIRECTORIES=client/ server/ encryption/ utils/
 #    The project cpp files:
-CPPFILES=main.cpp client/client.cpp
+CPPFILES=main.cpp client/client.cpp utils/argsmanager.cpp
 #    The libraries includes (-I):
 LIBS_INCLUDES=
 #    The libraries (-L and -l):
