@@ -8,20 +8,19 @@
 #                                        #
 ##########################################
 
-import server
+import server as s
 
 VPN_NAME = "Ninetales"
 VPN_USER = "sslvpn"
 VPN_USER_PATH = "/opt/ssl-vpn"
 
-def laucher():
-    server1 = Server(VPN_NAME, VPN_USER, VPN_USER_PATH)
-    if server1.Initialize():
+def launcher():
+
+    server1 = s.Server(VPN_NAME, VPN_USER, VPN_USER_PATH)
+    if server1.initialize():
         print("Server initialized")
     else:
         print("Error during server init")
-
-
 
 
 if __name__ == '__main__':
