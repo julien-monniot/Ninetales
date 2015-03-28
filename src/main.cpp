@@ -35,7 +35,7 @@ int initialize()
     // By default, most of the linux distributions don't allow it.
     // It is required as we will route our packages throught the PPP interface.
     DISPLAY("INIT", "IP Forwarding activation")
-    if(system("/usr/bin/echo 1 > /proc/sys/net/ipv4/ip_forward"))
+    if(system("echo 1 > /proc/sys/net/ipv4/ip_forward"))
     {
         return EXIT_FAILURE;
     }
@@ -44,8 +44,8 @@ int initialize()
     //// Create accounts for VPN user
     // Creation of the users accounts that will use the VPN.
     DISPLAY("INIT", "User VPN account creation")
-    if(system("/usr/bin/groups sslvpn >> /dev/null") && system("groupadd sslvpn \
-        && /usr/bin/useradd -m -d /opt/ssl-vpn -c \"SSL VPN User\" -g sslvpn \
+    if(system("groups sslvpn >> /dev/null") && system("groupadd sslvpn \
+        && useradd -m -d /opt/ssl-vpn -c \"SSL VPN User\" -g sslvpn \
         sslvpn >> /dev/null"))
     {
         return EXIT_FAILURE;
@@ -55,7 +55,7 @@ int initialize()
     //// Set up the VPN user home
     // This will be need in some future steps
     DISPLAY("INIT", "Setting the VPN user home up")
-    if(system("/usr/bin/mkdir -p /opt/ssl-vpn/etc/vpn1"))
+    if(system("mkdir -p /opt/ssl-vpn/etc/vpn1"))
     {
         return EXIT_FAILURE;
     }
