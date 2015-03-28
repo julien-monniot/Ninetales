@@ -12,12 +12,14 @@ import subprocess
 
 class Server:
 
-    def __init__(self, vpn_name, vpn_user, vpn_user_path, port):
+    def __init__(self, vpn_name, vpn_user, vpn_user_path, port, r_ip, l_ip):
         # Member variable
         self.vpn_name = vpn_name
         self.vpn_user = vpn_user
         self.vpn_user_path = vpn_user_path
         self.port = port
+        self.local_ip = l_ip
+        self.remote_ip = r_ip
 
     def initialize(self):
         # ppp, stunnel, route installed ?
@@ -65,12 +67,18 @@ class Server:
                 print("     Could not edit sudoers")
                 return False
 
+        # Copy certificates and stunnel.conf to /opt/'self.vpn_user'/etc/'self.vpn_name'
+
         #   If we've got so far, init is ok
         return True
 
+    # method used to start stunnel with
+    # "stunnel  /opt/'self.vpn_user'/etc/'self.vpn_name'/stunnel.conf" cmd
+    def startTunnel(self):
+        pass
 
 
-    # Class Functions:
+    # class utils methods:
 
     # Check packet requirements :
     # returns a list :
