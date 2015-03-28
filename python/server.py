@@ -27,9 +27,7 @@ VPN_USER_PATH = "/opt/ssl-vpn"
 #   script can't find which packets are installed
 def checkPackets():
     # Regex check on the system :
-    osversion = (os.popen('uname -r')).read()
-    prog = re.compile(r".*(arch).*", re.IGNORECASE)
-    result = prog.match(osversion)
+    result = re.search(r".*(arch).*", os.popen('uname -r').read(), re.IGNORECASE)
     missPackets = []
     # Finding packets :
     if (result):
@@ -44,8 +42,8 @@ def checkPackets():
             #print("net-tools not installed")
             missPackets.append("net-tools")
         ## TEST
-        if (os.system('pacman -Qs bidon')):
-            missPackets.append("bidon")
+#        if (os.system('pacman -Qs bidon')):
+#           missPackets.append("bidon")
         ## TEST
         return missPackets
     else:
@@ -56,9 +54,7 @@ def checkPackets():
 # check ip forwarding
 def checkIpForward():
     print("Activating ip forwarding...")
-    activateCmd = "sysctl net.ipv4.ip_forward=1"
-    prog = re.compile(r".*1$")
-    result = prog.match(os.popen(activateCmd).read())
+    result = re.search(r".*1$", os.popen("sysctl net.ipv4.ip_forward=1").read())
     if (result):
         return True
     else:
@@ -66,10 +62,7 @@ def checkIpForward():
 
 # Check for a specified user on the system
 def checkForUser(username):
-    etcPass = os.popen('less /etc/passwd').read()
-    regex = "^"+username+":.*"
-    prog = re.compile(regex, re.IGNORECASE)
-    result = prog.match(etcPass)
+    result = re.search(r".*"+username+":.*", os.popen('less /etc/passwd').read())
     if (result):
         return True
     else:
@@ -110,6 +103,7 @@ elif packetList[0] == "OS_UNKNOWN" :
 else:
     print("Missing packets :")
     [print(x+"\n") for x in packetList]
+    exit(1)
 
 # Activate ip forwarding :
 if(checkIpForward()):
