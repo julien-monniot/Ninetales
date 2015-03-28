@@ -63,7 +63,7 @@ class Server:
             print("     Editing sudoers...")
             if self.editSudoers():
                 print("     Sudoers OK")
-            else
+            else:
                 print("     Could not edit sudoers")
                 return False
 
