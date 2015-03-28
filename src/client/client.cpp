@@ -41,7 +41,7 @@ bool Client::ConnectInterface()
             throw new std::string("Erreur : interface name too long");
         } else 
 	{
-           snprintf(ifr.ifr_name, IFNAMSIZ,  iname.c_str());
+           snprintf(ifr.ifr_name, IFNAMSIZ,"%s",  iname.c_str());
         }
     } 
     catch ( std::string str ) 
