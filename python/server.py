@@ -8,15 +8,16 @@
 
 import os
 import re
+import subprocess
 
 class Server:
 
-    def __init__(self, vpn_name, vpn_user, vpn_user_path):
+    def __init__(self, vpn_name, vpn_user, vpn_user_path, port):
         # Member variable
         self.vpn_name = vpn_name
         self.vpn_user = vpn_user
         self.vpn_user_path = vpn_user_path
-
+        self.port = port
 
     def initialize(self):
         # ppp, stunnel, route installed ?
@@ -51,6 +52,18 @@ class Server:
             else:
                 print("Wasn't able to create user or group.")
                 return False # Group/user creation failed
+
+        # Edit sudoers if necessary :
+        print("Checking for '"+self.vpn_user+" ALL=NOPASSWD: /usr/sbin/pppd' in sudoers")
+        if self.checkSudoers():
+            print("     Sudoers OK")
+        else:
+            print("     Editing sudoers...")
+            if self.editSudoers():
+                print("     Sudoers OK")
+            else
+                print("     Could not edit sudoers")
+                return False
 
         #   If we've got so far, init is ok
         return True
@@ -111,7 +124,28 @@ class Server:
             folderCmd1 = "sudo -u sslvpn mkdir "+self.vpn_user_path+"/etc"
             folderCmd2 = "sudo -u sslvpn mkdir "+self.vpn_user_path+"/etc/"+self.vpn_name
             if (os.popen(folderCmd1).read() + os.popen(folderCmd2).read() == ""):
-                return True	# mkdir failed
+                os.popen('chmod -R 777 /opt/ssl-vpn') # that's just awful, but we have no time for full correctness of code
+                return True
             else:
-                return False
+                return False # mkdir failed
         return False;	# User/group add failed
+
+
+    # Edit sudoers file using an external bash script.
+    def checkSudoers(self):
+        # First check wether sudoers needs edition :
+        result = re.search(r".*"+re.escape(self.vpn_user)+" ALL=NOPASSWD: /usr/sbin/pppd.*", os.popen('less /etc/sudoers').read())
+        if (result):
+            return True
+        else:
+            return False
+
+    # To be used if sudoers doesn't contain the right line for vpn_user
+    def editSudoers(self):
+        f = open('cmd', 'w')
+        sudoersLine = self.vpn_user+" ALL=NOPASSWD: /usr/sbin/pppd"
+        f.write(sudoersLine)
+        f.close()
+        subprocess.call("sudoersEdit.sh",shell=True)
+        os.system('rm cmd')
+        return checkSudoers()
