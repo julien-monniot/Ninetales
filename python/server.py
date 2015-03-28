@@ -57,8 +57,8 @@ def checkPackets():
 def checkIpForward():
     print("Activating ip forwarding...")
     activateCmd = "sysctl net.ipv4.ip_forward=1"
-    prog = re.compile(r"1$")
-    result = prog.match(str(os.popen(activateCmd)))
+    prog = re.compile(r".*1$")
+    result = prog.match(os.popen(activateCmd).read())
     if (result):
         return True
     else:
@@ -66,7 +66,7 @@ def checkIpForward():
 
 # Check for a specified user on the system
 def checkForUser(username):
-    etcPass = os.popen('less /etc/passwd')
+    etcPass = os.popen('less /etc/passwd').read()
     regex = "^"+username+":.*"
     prog = re.compile(regex, re.IGNORECASE)
     result = prog.match(etcPass)
