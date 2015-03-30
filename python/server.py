@@ -9,8 +9,11 @@
 import os
 import re
 import subprocess
+import shutil
 
 class Server:
+
+    STUNNEL_CONF = "stunnel.conf"
 
     def __init__(self, vpn_name, vpn_user, vpn_user_path, port, r_ip, l_ip):
         # Member variable
@@ -157,3 +160,29 @@ class Server:
         subprocess.call("sudoersEdit.sh",shell=True)
         os.system('rm cmd')
         return checkSudoers()
+
+    # Copy conf files from server file to /opt/ssl-vpn/etc/'self.vpn_name'
+    # source_path like : '/opt/'self.von_user'/etc/'
+    def set_stunnelConf():
+        f = open('stunnel.conf', 'w')
+        f.write("debug = 7")
+        f.write("foreground = yes")
+        f.write("cert = /opt/ssl-vpn/etc/vpn1")  # change to actual path later
+        f.write("verify = 3")
+        f.write("CApath = /opt/ssl-vpn/etc/vpn1")  # change to actuel path later
+        f.write("CAfile = /opt/ssl-vpn/etc/vpn1/server.pem")  # change to actual path later
+        f.write("[pppd]")
+        f.write("accept ="+self.port)
+        f.write("exec = /usr/bin/sudo")
+        f.write("execargs = sudo pppd noauth debug 192.168.0.42:192.168.0.43")
+        f.write("pty = yes")
+
+        f.close()
+        # copy file to the right location
+        shutil.move("stunnel.conf", "/opt/"+self.vpn_user+"/etc/")
+
+
+
+    def launch_server():
+        cmd = "sudo stunnel /opt/"+self.vpn_user+"/etc/stunnel.conf"
+        os.popen(cmd)
