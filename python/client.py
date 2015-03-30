@@ -1,6 +1,6 @@
 ##########################################
 #                                        #
-#   Server for pppd/stunnel VPN          #
+#   Client for pppd/stunnel VPN          #
 #   created : 28/03/15                   #
 #   author : Pierre G                    #
 #                                        #
@@ -10,7 +10,7 @@ import os
 import re
 import subprocess
 
-class Server:
+class Client:
 
     def __init__(self, vpn_name, vpn_user, vpn_user_path, address, port):
         # Member variable
@@ -65,11 +65,22 @@ class Server:
             else:
                 print("     Could not edit sudoers")
                 return False
-
+        
+        
+        print("Copy certificates and stunnel.conf to /opt/"+self.vpn_user+"/etc/...")
         # Copy certificates and stunnel.conf to /opt/'self.vpn_user'/etc/'self.vpn_name'
+        self.makeDirectory(self.vpn_user_path+"/etc/")
+        self.makeDirectory(self.vpn_user_path+"/etc/vpn1/")
+        self.copyFile("./client/stunnel.conf",self.vpn_user_path+"/etc/")
+        self.copyFile("./client/sslvpn.cnf",self.vpn_user_path+"/etc/vpn1/")
 
         #   If we've got so far, init is ok
         return True
+
+    def connect(self):
+        # Try to connect tu the server
+        os.system('sudo pppd updetach debug noauth pty "sudo -u sslvpn stunnel /opt/'+self.vpn_user+'/etc/stunnel.conf"')
+
 
     # method used to start stunnel with
     # "stunnel  /opt/'self.vpn_user'/etc/'self.vpn_name'/stunnel.conf" cmd
@@ -156,3 +167,15 @@ class Server:
         subprocess.call("sudoersEdit.sh",shell=True)
         os.system('rm cmd')
         return checkSudoers()
+
+    # Copy srcfile to tgtpath
+    def copyFile(self, srcfile, tgtpath):
+        os.system("cp "+self.vpn_user+" "+srcfile+" "+tgtpath)
+        os.system("chown "+self.vpn_user+":"+self.vpn_user+" "+os.path.join(tgtpath, os.path.basename(srcfile)))
+        return True
+
+    # Create directory
+    def makeDirectory(self, dirpath):
+        os.system("mkdir "+dirpath+">/dev/null")
+        os.system("chown "+self.vpn_user+":"+self.vpn_user+" "+dirpath)
+        return True

@@ -9,6 +9,7 @@
 ##########################################
 
 from server import *
+from client import *
 import argparse
 import re
 
@@ -35,7 +36,7 @@ def arguments_parser():
     
     # Client parser
     subparser_client = subparser.add_parser("client", help="Manage a VPN client")
-    subparser_client.add_argument("address", type=str, nargs=1, help="IP address to connect to.")
+    subparser_client.add_argument("address", type=lambda x: validate_ip(parser, x), nargs=1, help="IP address to connect to.")
     subparser_client.add_argument("-p", "--port", type=lambda x: validate_port(parser, x), required=False, nargs=1, default=42421, help="Port connection to accept. Default port is 42421.")
     subparser_client.set_defaults(func=launch_client)
     
@@ -52,7 +53,11 @@ def arguments_parser():
 
 def launch_client(args):
     print("Client initialization...")
-    # client = ...
+    client = Client(VPN_NAME, VPN_USER, VPN_USER_PATH, args.address, args.port)
+    if client.initialize():
+        print("Server initialized")
+    else:
+        print("Error during server init")
 
 def launch_server(args):
     print("Server initialization...")

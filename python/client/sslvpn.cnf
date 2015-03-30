@@ -1,0 +1,24 @@
+[ req ]
+    default_bits                    = 1024
+    encrypt_key                     = yes
+    distinguished_name              = req_dn
+    x509_extensions                 = cert_type
+    
+    [ req_dn ]
+    countryName                     = FR
+    countryName_default             = FR
+    
+    stateOrProvinceName             = Rhone-Alpes
+    stateOrProvinceName_default     = Rhone-Alpes
+    
+    localityName                    = Lyon
+    localityName_default            = Lyon
+    
+    0.organizationName              = Ninetales
+    0.organizationName_default      = Ninetales
+    
+    0.commonName                    = ninetales-client.fr
+    0.commonName_default            = ninetales-client.fr
+    
+    [ cert_type ]
+    nsCertType                      = server
