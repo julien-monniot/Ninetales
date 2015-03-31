@@ -89,10 +89,11 @@ int Server::Listen()
     memset(&remote, 0, remotelen); // Clean struct
     
     // Wait for connection
-    if ((net_fd = accept(tmp_sock_fd, (struct sockaddr*)&remote, &remotelen)) < 0) {
+    int tmp_net_fd;
+    if ((tmp_net_fd = accept(tmp_sock_fd, (struct sockaddr*)&remote, &remotelen)) < 0) {
         std::cerr << "ERROR: While waiting for connecction" << std::endl;
         return -1;
     }
     
-    return 0;
+    return tmp_net_fd;
 }
