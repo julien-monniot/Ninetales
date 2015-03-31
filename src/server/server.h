@@ -31,6 +31,7 @@ public:
     Server(char* p_iname, int p_flags, int port);
     ~Server();
     int Listen();
+    int SSLConnection();
     int GetTunFD();
     int GetNetFD();
 private:

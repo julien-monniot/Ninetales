@@ -30,6 +30,7 @@ public:
     Client(char* p_iname, int p_flags, int port, char* ip);
     ~Client();
     int ConnectServer();
+    int SSLConnection();
     int GetTunFD();
     int GetNetFD();
 private:

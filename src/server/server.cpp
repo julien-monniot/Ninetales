@@ -97,3 +97,21 @@ int Server::Listen()
     
     return tmp_net_fd;
 }
+
+int Server::SSLConnection()
+{
+    SSL_CTX* ctx = initCTX();
+    SSL* ssl_net = SSL_new(ctx);
+    SSL* ssl_tun = SSL_new(ctx);
+    SSL_set_fd(ssl_net, net_fd);
+    SSL_set_fd(ssl_tun, tun_fd);
+    if ( (SSL_connect(ssl_tun) < 0) || (SSL_connect(ssl_net) < 0) )
+    {
+        std::cerr << "Cannot connect SSL socket" << std::endl;
+        return -1;
+    }
+    std::cerr << "SSL TUN socket: " << SSL_get_cipher(ssl_tun) << std::endl;
+    std::cerr << "SSL NET socket: " << SSL_get_cipher(ssl_net) << std::endl;
+    
+    return 0;
+}

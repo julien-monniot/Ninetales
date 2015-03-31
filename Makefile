@@ -6,9 +6,9 @@ DIRECTORIES=client/ server/ encryption/ utils/ common/
 #    The project cpp files:
 CPPFILES=main.cpp client/client.cpp server/server.cpp utils/argsmanager.cpp common/interface.cpp
 #    The libraries includes (-I):
-LIBS_INCLUDES=
+LIBS_INCLUDES=-I"/usr/include/openssl/"
 #    The libraries (-L and -l):
-LIBS=-L"/usr/lib" -lboost_program_options
+LIBS=-L"/usr/lib" -lboost_program_options -lcrypto -lssl
 
 # Directories
 CURRENT_DIRECTORY=./

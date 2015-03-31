@@ -1,6 +1,5 @@
 #include "interface.h"
 
-
 int prepare_tun(char* dev, int flags) {
     std::cout << "Start of ConnectInterface()" << std::endl;
     struct ifreq ifr;
@@ -154,3 +153,109 @@ int run(int net_fd, int tun_fd)
     return 0;
 }
 
+int SSL_run(SSL* ssl_net, SSL* ssl_tun)
+{
+    int net_fd = SSL_get_fd(ssl_net);
+    int tun_fd = SSL_get_fd(ssl_tun);
+    char buffer[BUFSIZE];
+    int maxfd = (tun_fd > net_fd)? tun_fd : net_fd;
+
+    for(;;) {
+        uint16_t nread;
+        uint16_t nwrite;
+        //uint16_t plength;
+        (void) nwrite;
+        int ret;
+        fd_set rd_set;
+
+        FD_ZERO(&rd_set);
+        FD_SET(tun_fd, &rd_set);
+        FD_SET(net_fd, &rd_set);
+
+        // Check the file descriptors
+        ret = select(maxfd + 1, &rd_set, NULL, NULL, NULL);
+
+        //    Interruption
+        if (ret < 0 && errno == EINTR){
+            std::cerr << "WARNING: Interruption" << std::endl;
+            continue; // Try again
+        }
+        //    File descriptor invalid
+        else if (ret < 0 && errno == EBADF){
+            std::cerr << "ERROR: File descriptor invalid" << std::endl;
+            return -1;
+        }
+        //    Other error
+        else if (ret < 0) {
+            std::cerr << "ERROR: Select()" << std::endl;
+            return -1;
+        }
+
+        // There is data from tun to send to the network
+        if(FD_ISSET(tun_fd, &rd_set)) {
+
+            // nread = cread(tun_fd, buffer, BUFSIZE);
+            // plength = htons(nread);
+            // nwrite = cwrite(net_fd, (char *)&plength, sizeof(plength));
+            // nwrite = cwrite(net_fd, buffer, nread);
+            nread = SSL_read(ssl_tun, buffer, BUFSIZE);
+            SSL_write(ssl_net, buffer, nread);
+            std::cout << "TUN -> NET: " << nread << " bytes" << std::endl;
+        }
+
+        // There is data from the network to send to tun
+        if(FD_ISSET(net_fd, &rd_set)) {
+
+            // The peer stopped the connection
+            // nread = read_n(net_fd, (char *)&plength, sizeof(plength));
+            nread = SSL_read(ssl_net, buffer, BUFSIZE);
+            if(nread == 0) {
+                break;
+            }
+            SSL_write(ssl_tun, buffer, nread);
+            //nread = read_n(net_fd, buffer, ntohs(plength));
+            //nwrite = cwrite(tun_fd, buffer, nread);
+            std::cout << "NET -> TUN: " << nread << " bytes" << std::endl;
+        }
+    }
+    
+    return 0;
+}
+
+SSL_CTX* initCTX()
+{
+    SSL_CTX *ctx;
+
+    OpenSSL_add_all_algorithms();
+    SSL_load_error_strings();
+    ctx = SSL_CTX_new(SSLv2_server_method());
+    if ( ctx == NULL )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    
+    return ctx;
+}
+
+void loadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
+{
+    
+    if ( SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0 )
+    {
+        std::cerr << "ERROR: Cannot use the local certificate" << std::endl;
+        exit(1);
+    }
+    
+    if ( SSL_CTX_use_PrivateKey_file(ctx, KeyFile, SSL_FILETYPE_PEM) <= 0 )
+    {
+        std::cerr << "ERROR: Cannot use the private key" << std::endl;
+        exit(1);
+    }
+    
+    if ( !SSL_CTX_check_private_key(ctx) )
+    {
+        std::cerr << "ERROR: Private key does not match the certificate" << std::endl;
+        exit(1);
+    }
+}

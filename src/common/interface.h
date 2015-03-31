@@ -23,14 +23,21 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <openssl/bio.h> 
+#include <openssl/ssl.h> 
+#include <openssl/err.h>
+#include <openssl/rand.h>
 
-#define BUFSIZE 56
+#define BUFSIZE 2000
+
 
 extern int prepare_tun(char *dev, int flags);
 extern int cread(int fd, char *buf, int n);
 extern int cwrite(int fd, char *buf, int n);
 extern int read_n(int fd, char *buf, int n);
 extern int run(int net_fd, int tap_fd);
+extern SSL_CTX* initCTX();
+extern void loadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile);
 
 
 #endif // Interface_H
