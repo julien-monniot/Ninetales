@@ -89,10 +89,10 @@ int read_n(int fd, char *buf, int n)
     return n;  
 }
 
-int run(int net_fd, int tap_fd)
+int run(int net_fd, int tun_fd)
 {
     char buffer[BUFSIZE];
-    int maxfd = (tap_fd > net_fd)? tap_fd : net_fd;
+    int maxfd = (tun_fd > net_fd)? tun_fd : net_fd;
 
     for(;;) {
         uint16_t nread;
@@ -103,7 +103,7 @@ int run(int net_fd, int tap_fd)
         fd_set rd_set;
 
         FD_ZERO(&rd_set);
-        FD_SET(tap_fd, &rd_set);
+        FD_SET(tun_fd, &rd_set);
         FD_SET(net_fd, &rd_set);
 
         // Check the file descriptors
@@ -126,9 +126,9 @@ int run(int net_fd, int tap_fd)
         }
 
         // There is data from tun to send to the network
-        if(FD_ISSET(tap_fd, &rd_set)) {
+        if(FD_ISSET(tun_fd, &rd_set)) {
 
-            nread = cread(tap_fd, buffer, BUFSIZE);
+            nread = cread(tun_fd, buffer, BUFSIZE);
             plength = htons(nread);
             nwrite = cwrite(net_fd, (char *)&plength, sizeof(plength));
             nwrite = cwrite(net_fd, buffer, nread);
@@ -145,7 +145,7 @@ int run(int net_fd, int tap_fd)
             }
 
             nread = read_n(net_fd, buffer, ntohs(plength));
-            nwrite = cwrite(tap_fd, buffer, nread);
+            nwrite = cwrite(tun_fd, buffer, nread);
         }
     }
     

@@ -26,6 +26,7 @@ Server::Server(char* p_iname, int p_flags, int port)
     }
     std::cout << "Client connected on port :" << port << std::endl;    
 
+    run(net_fd, tun_fd);
 }
 
 Server::~Server()

@@ -26,6 +26,7 @@ Client::Client(char* p_iname, int p_flags, int port, char* ip)
     }
     std::cout << "Client connected to server at " << remote_ip << ":" << port << std::endl;    
 
+    run(net_fd, tun_fd);
 }
 
 Client::~Client()
