@@ -19,7 +19,9 @@ ArgsManager::ArgsManager(int argc, const char* argv[]) :
     {
         // Set up the description of the options :
         desc.add_options()
-            ("init,i", "Enable the initialization operations");
+            ("init,i", "Enable the initialization operations")
+            ("server,s", "Launch a server")
+            ("client,c", "Launch a client");
         
         // Parse the options :
         po::store(po::command_line_parser(argc, argv).
