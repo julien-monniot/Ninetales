@@ -26,7 +26,7 @@ Server::Server(char* p_iname, int p_flags, int port)
     }
     std::cout << "Client connected on port :" << port << std::endl;    
 
-    run(net_fd, tun_fd);
+    //run(net_fd, tun_fd);
 }
 
 Server::~Server()
@@ -112,6 +112,8 @@ int Server::SSLConnection()
     }
     std::cerr << "SSL TUN socket: " << SSL_get_cipher(ssl_tun) << std::endl;
     std::cerr << "SSL NET socket: " << SSL_get_cipher(ssl_net) << std::endl;
+    
+    SSL_run(ssl_net, ssl_tun);
     
     return 0;
 }

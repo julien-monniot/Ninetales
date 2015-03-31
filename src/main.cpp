@@ -41,10 +41,12 @@ int main( int argc, const char* argv[] )
     if (am.count("client"))
     {
         Client client(vpn_interface, (IFF_TUN|IFF_NO_PI), 80, server_ip);
+        client.SSLConnection();
     }
     else if (am.count("server"))
     {
         Server server(vpn_interface, (IFF_TUN|IFF_NO_PI), 80);
+        server.SSLConnection();
     }
 }
 
