@@ -1,26 +1,22 @@
-/*********************************
- *     VPN Client - Tun/Tap      *
- *      Created 25/03            *
- *      Author : JM              *
- * ******************************/
-#include "client.h"
+#include "server.h"
 
 
 //-------------------------------------------------------------------------------- Constr - Destr
-Client::Client() : interface_fd(-1), iname("tun1"), flags(IFF_TUN | IFF_NO_PI)
+Server::Server() : interface_fd(-1), iname("vpn-tun"), flags(IFF_TUN | IFF_NO_PI)
 {
 }
 
-Client::Client(std::string p_iname, int p_flags) : interface_fd(-1), iname(p_iname), flags(p_flags)
+Server::Server(std::string p_iname, int p_flags) : interface_fd(-1), iname(p_iname), flags(p_flags)
 {
 }
 
-Client::~Client()
+Server::~Server()
 {
+    
 }
 
 //-------------------------------------------------------------------------------- Public methods
-bool Client::ConnectInterface()
+bool Server::ConnectInterface()
 { 
     std::cout << "Start of ConnectInterface()" << std::endl;
     struct ifreq ifr;
@@ -46,7 +42,7 @@ bool Client::ConnectInterface()
             throw new std::string("Erreur : interface name too long");
         } else 
 	{
-           snprintf(ifr.ifr_name, IFNAMSIZ,  iname.c_str());
+           snprintf(ifr.ifr_name, IFNAMSIZ,"%s",  iname.c_str());
         }
     } 
     catch ( std::string str ) 
@@ -74,7 +70,7 @@ bool Client::ConnectInterface()
 }
 
 // debug : 
-int Client::getFd()
+int Server::getFd()
 {
     return this->interface_fd;
 }

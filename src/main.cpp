@@ -93,5 +93,14 @@ int main( int argc, const char* argv[] )
         return EXIT_FAILURE;
     }
     
+    if (am.count("client"))
+    {
+        // Launch client
+    }
+    else if (am.count("server"))
+    {
+        // Launch server
+    }
+    
 }
 
