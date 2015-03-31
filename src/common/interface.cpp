@@ -93,8 +93,11 @@ int run(int net_fd, int tun_fd)
 {
     char buffer[BUFSIZE];
     int maxfd = (tun_fd > net_fd)? tun_fd : net_fd;
+    
+    std::cout << "AAA" << std::endl;
 
     for(;;) {
+        std::cout << "1" << std::endl;
         uint16_t nread;
         uint16_t nwrite;
         uint16_t plength;
@@ -102,12 +105,15 @@ int run(int net_fd, int tun_fd)
         int ret;
         fd_set rd_set;
 
+        std::cout << "2" << std::endl;
         FD_ZERO(&rd_set);
         FD_SET(tun_fd, &rd_set);
         FD_SET(net_fd, &rd_set);
+        std::cout << net_fd << " " << tun_fd << std::endl;
 
         // Check the file descriptors
         ret = select(maxfd + 1, &rd_set, NULL, NULL, NULL);
+        std::cout << "4" << std::endl;
 
         //    Interruption
         if (ret < 0 && errno == EINTR){
@@ -132,7 +138,7 @@ int run(int net_fd, int tun_fd)
             plength = htons(nread);
             nwrite = cwrite(net_fd, (char *)&plength, sizeof(plength));
             nwrite = cwrite(net_fd, buffer, nread);
-
+            std::cout << "COMEON" << std::endl;
         }
 
         // There is data from the network to send to tun
@@ -146,6 +152,7 @@ int run(int net_fd, int tun_fd)
 
             nread = read_n(net_fd, buffer, ntohs(plength));
             nwrite = cwrite(tun_fd, buffer, nread);
+            std::cout << "COMEIN" << std::endl;
         }
     }
     
