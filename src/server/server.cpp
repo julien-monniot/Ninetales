@@ -110,8 +110,8 @@ int Server::SSLConnection()
         std::cerr << "Cannot connect SSL socket" << std::endl;
         return -1;
     }
-    std::cerr << "SSL TUN socket: " << SSL_get_cipher(ssl_tun) << std::endl;
-    std::cerr << "SSL NET socket: " << SSL_get_cipher(ssl_net) << std::endl;
+    std::cerr << "SSL TUN socket: " << std::endl;
+    std::cerr << "SSL NET socket: " << std::endl;
     
     SSL_run(ssl_net, ssl_tun);
     
