@@ -1,12 +1,12 @@
 #include "client.h"
-
+#include "common/interface.h"
 
 //-------------------------------------------------------------------------------- Constr - Destr
-Client::Client() : interface_fd(-1), iname("tun1"), flags(IFF_TUN | IFF_NO_PI)
+Client::Client()
 {
 }
 
-Client::Client(std::string p_iname, int p_flags) : interface_fd(-1), iname(p_iname), flags(p_flags)
+Client::Client(std::string p_iname, int p_flags, int port) : interface_fd(-1), iname(p_iname), flags(p_flags), port(443), remote_ip("192.168.0.42")
 {
 }
 
@@ -15,63 +15,48 @@ Client::~Client()
 }
 
 //-------------------------------------------------------------------------------- Public methods
-bool Client::ConnectInterface()
-{ 
-    std::cout << "Start of ConnectInterface()" << std::endl;
-    struct ifreq ifr;
-    int fd, err;    
-    std::string clonedev = "/dev/net/tun";
 
-    if( (fd = open(clonedev.c_str() , O_RDWR)) < 0 ) 
-    {
-        std::cerr << "Error when opening tun file" << std::endl;
-        return false;
-    }
-
-    std::cout << "File " << clonedev << " opened" << std::endl;
-
-    memset(&ifr, 0, sizeof(ifr));
-
-    ifr.ifr_flags = flags;
-    
-    try 
-    {
-        if (sizeof(iname.c_str()) > IFNAMSIZ)
-        {
-            throw new std::string("Erreur : interface name too long");
-        } else 
-	{
-           snprintf(ifr.ifr_name, IFNAMSIZ,"%s",  iname.c_str());
-        }
-    } 
-    catch ( std::string str ) 
-    {
-        std::cerr << str << std::endl;
-        return false;
-    }
-
-    std::cout << "Ifr flag and name filled" << std::endl;
-    
-    if( (err = ioctl(fd, TUNSETIFF, (void *)&ifr)) < 0 ) 
-    {
-        std::cerr << "Error when using ioctl TUNSETIFF" << std::endl;
-        close(fd);
-        return false;
-    }
-    //strcpy(dev, ifr.ifr_name);
-    
-    std::cout << "Iotcl ok" << std::endl;
-
-    // store fd value in member variable
-    this->interface_fd = fd;
-    
-    return true;
-}
-
-// debug : 
-int Client::getFd()
+bool Client::StartClient()
 {
-    return this->interface_fd;
+    // get tun file_desc
+    int tun_fd = prepare_tun(iname, flags); 
+    if (tun_fd < 0) 
+    {
+        std::cerr << "Tun interface file descriptor : not OK" << std::endl;
+        return false;
+    }
+    std::cout << "Tun interface file descriptor OK" << std::endl;
+
+    // Connect to server :
+    int sock_fd;
+    if ( (sock_fd = this.ConnectServer()) < 0 )
+    {
+        std::cerr << "Connection to server : failed." << std::endl;    
+    }   
+    std::cout << "Client connected to server at " << remote_ip << ":" << port << std::endl;    
+
 }
 
 
+int Client::ConnectServer()
+{
+    int tmp_sock_fd;  // file descriptor for socket
+    struct sockaddr_in local, remote;
+
+    // create socket
+    if ( tmp_sock_fd = socket(AF_INET, SOCK_STREAM, 0) < 0 )
+    {
+        std::cerr << "Socket creation failed" << std::endl;
+    }
+    
+    memset(&remote, 0, sizeof(remote));
+    remote.sin_family = AF_INET;
+    remote.sin_addr.s_addr = inet_addr(this.remote_ip); 
+    remote.sin_port = htons(this.port);
+
+    if ( connect(tmp_sock_fd, (struct sockaddr*) &remote, sizeof(remote)) < 0 )
+    {
+        std::cerr << "Socket connection failed" << std::endl;
+    }
+    return tmp_sock_fd;
+}

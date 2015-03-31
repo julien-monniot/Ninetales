@@ -29,12 +29,14 @@ public:
     Client();
     Client(std::string, int);
     ~Client();
-    bool ConnectInterface();
-    int getFd();
+    int ConnectServer();
 private:
     int interface_fd;
+    int sock_fd;
     std::string iname;
     int flags;
+    int port;                       // connection port
+    char remote_ip[16];            /* dotted quad IP string */
 protected:
 
 };
