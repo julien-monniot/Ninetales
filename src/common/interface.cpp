@@ -73,8 +73,7 @@ int cwrite(int fd, char *buf, int n)
 int read_n(int fd, char *buf, int n)
 {
 
-    int nread;
-    int left = (MAX_READ > n) ? n : MAX_READ;
+    int nread, left = n;
 
     while(left > 0)
     {

@@ -24,8 +24,7 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#define BUFSIZE 2000
-#define MAX_READ 56
+#define BUFSIZE 56
 
 extern int prepare_tun(char *dev, int flags);
 extern int cread(int fd, char *buf, int n);
