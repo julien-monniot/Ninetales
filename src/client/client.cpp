@@ -69,5 +69,7 @@ int Client::ConnectServer()
         return -1;
     }
     
-    return tmp_sock_fd;
+    net_fd = tmp_sock_fd;
+    
+    return 0;
 }

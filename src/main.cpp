@@ -9,6 +9,7 @@
 
 // Inlude project
 #include "client/client.h"
+#include "server/server.h"
 #include "utils/debugger.h"
 #include "utils/utils.h"
 #include "utils/conf_files.h"
@@ -76,6 +77,10 @@ int initialize()
 
 int main( int argc, const char* argv[] )
 {
+    
+    char* vpn_interface("vpn-tun");
+    char* server_ip("192.168.0.105");
+    
     ArgsManager am(argc, argv);
     
     if (am.isError())
@@ -95,11 +100,13 @@ int main( int argc, const char* argv[] )
     
     if (am.count("client"))
     {
-        // Launch client
+        Client client(vpn_interface, (IFF_TUN|IFF_NO_PI), 80, server_ip);
+        client.ConnectServer();
     }
     else if (am.count("server"))
     {
-        // Launch server
+        Server server(vpn_interface, (IFF_TUN|IFF_NO_PI), 80);
+        server.Listen();
     }
     
 }

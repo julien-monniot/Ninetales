@@ -46,10 +46,18 @@ int Server::GetNetFD()
 
 
 int Server::Listen()
-{
+{    
+    // Create socket
+    int tmp_sock_fd;  // file descriptor for socket
+    if ( (tmp_sock_fd = socket(PF_INET, SOCK_STREAM, 0)) < 0 )
+    {
+        std::cerr << "Socket creation failed" << std::endl;
+        return -1;
+    }
+    
     // Set socket options
-    if(setsockopt(net_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval)) < 0) {
-        std::cerr << "ERROR: Setting socket options" << std::endl;
+    if(setsockopt(tmp_sock_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval)) < 0) {
+        std::cerr << "ERROR: While setting socket options" << std::endl;
         return -1;
     }
 
@@ -61,13 +69,14 @@ int Server::Listen()
     local.sin_port = htons(port); // ... on this port
     
     // Bind
-    if (bind(net_fd, (struct sockaddr*) &local, sizeof(local)) < 0) {
+    int err;
+    if (err = bind(tmp_sock_fd, (struct sockaddr*) &local, sizeof(local)) < 0) {
         std::cerr << "ERROR: Bind failed" << std::endl;
         return -1;
     }
     
     // Listen
-    if (listen(net_fd, 5) < 0) {
+    if (listen(tmp_sock_fd, 5) < 0) {
         std::cerr << "ERROR: While litening" << std::endl;
         return -1;
     }
@@ -78,7 +87,7 @@ int Server::Listen()
     memset(&remote, 0, remotelen); // Clean struct
     
     // Wait for connection
-    if ((net_fd = accept(net_fd, (struct sockaddr*)&remote, &remotelen)) < 0) {
+    if ((net_fd = accept(tmp_sock_fd, (struct sockaddr*)&remote, &remotelen)) < 0) {
         std::cerr << "ERROR: While waiting for connecction" << std::endl;
         return -1;
     }
