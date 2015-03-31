@@ -19,7 +19,7 @@ VPN_USER_PATH = "/opt/ssl-vpn"
 
 def validate_port(parser, arg):
     arg = int(arg)
-    if arg >= 0 and arg <= 65535:
+    if arg <= 0 or arg >= 65535:
         parser.error("The port number must be between 0 and 65535")
     return arg
 
@@ -33,20 +33,20 @@ def arguments_parser():
     # General
     parser = argparse.ArgumentParser(prog="ninetales", description="Another VPN program")
     subparser = parser.add_subparsers()
-    
+
     # Client parser
     subparser_client = subparser.add_parser("client", help="Manage a VPN client")
     subparser_client.add_argument("address", type=lambda x: validate_ip(parser, x), nargs=1, help="IP address to connect to.")
     subparser_client.add_argument("-p", "--port", type=lambda x: validate_port(parser, x), required=False, nargs=1, default=42421, help="Port connection to accept. Default port is 42421.")
     subparser_client.set_defaults(func=launch_client)
-    
+
     # Server parser
     subparser_server = subparser.add_parser("server", help="Manage a VPN server")
-    subparser_server.add_argument("-p", "--port", type=lambda x: validate_port(parser, x), required=False, nargs=1, default=42421, help="Port connection to accept. Default port is 42421.")
-    subparser_server.add_argument("-l", "--local", type=lambda x: validate_ip(parser, x), required=False, nargs=1, default="192.168.0.1", help="Local IP in the ppp network. Default IP is 192.168.0.1.")
-    subparser_server.add_argument("-r", "--remote", type=lambda x: validate_ip(parser, x), required=False, nargs=1, default="192.168.0.2", help="Remote IP in the ppp network. Default IP is 192.168.0.2.")
+    subparser_server.add_argument("-p", "--port", type=lambda x: validate_port(parser, x), required=False, nargs=1, default=[42421], help="Port connection to accept. Default port is 42421.")
+    subparser_server.add_argument("-l", "--local", type=lambda x: validate_ip(parser, x), required=False, nargs=1, default=["192.168.0.42"], help="Local IP in the ppp network. Default IP is 192.168.0.42.")
+    subparser_server.add_argument("-r", "--remote", type=lambda x: validate_ip(parser, x), required=False, nargs=1, default=["192.168.0.43"], help="Remote IP in the ppp network. Default IP is 192.168.0.43.")
     subparser_server.set_defaults(func=launch_server)
-    
+
     # Return result
     args = parser.parse_args()
     return args
@@ -61,7 +61,7 @@ def launch_client(args):
 
 def launch_server(args):
     print("Server initialization...")
-    server = Server(VPN_NAME, VPN_USER, VPN_USER_PATH, args.port, args.local, args.remote)
+    server = Server(VPN_NAME, VPN_USER, VPN_USER_PATH, str(args.port[0]), args.local[0], args.remote[0])
     if server.initialize():
         print("Server initialized")
     else:

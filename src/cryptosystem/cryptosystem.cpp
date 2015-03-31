@@ -5,6 +5,7 @@
 #include <openssl/aes.h>
 #include <openssl/rand.h>
 #include <string.h>
+#include <time.h>
 
 using namespace std;
 
@@ -71,8 +72,14 @@ bool Cryptosystem::isSignatureLegit(unsigned char* signature,unsigned char* encr
 
 unsigned char* Cryptosystem::decideAESKey()
 {
-    unsigned char* retour = new unsigned char[25];
-    retour = (unsigned char*)"OuiBonCaVaCestTemporaire";
+    srand(time(NULL));
+    int character;
+    unsigned char* retour = new unsigned char[128];
+    for(int i=0;i<128;i++)
+    {
+        character=rand();
+        retour[i]=(unsigned char)character;
+    }
     return retour; //implémentation temporaire, il faut que les deux partis obtiennent la clé et qu'ils décident ensemble
 }
 

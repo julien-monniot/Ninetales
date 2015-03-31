@@ -55,6 +55,7 @@ int main(int argc, char** argv)
     unsigned char* commonKey=c.decideAESKey();
     unsigned char message[] = "Viva AES !";
     unsigned char fakeKey[] = "Well, it's worth a try";
+    cout<<"Alice and Bob have decided on the supersecret key : "<<commonKey<<endl;
     cout<<"Bob sends to Alice : "<<message<<endl;
     unsigned char* encryptedAesMessage=c.encryptAES(message, commonKey);
     unsigned char* decryptedAesMessage=c.decryptAES(encryptedAesMessage, commonKey);

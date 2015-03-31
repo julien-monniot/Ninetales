@@ -9,6 +9,8 @@
 import os
 import re
 import subprocess
+import shutil
+from distutils.dir_util import copy_tree
 
 class Server:
 
@@ -17,9 +19,15 @@ class Server:
         self.vpn_name = vpn_name
         self.vpn_user = vpn_user
         self.vpn_user_path = vpn_user_path
-        self.port = port
-        self.local_ip = l_ip
-        self.remote_ip = r_ip
+        print("port type : "+str(type(port)))
+        self.port = port                # defaul is  42421
+        self.local_ip = l_ip            # default is 192.168.0.42
+        self.remote_ip = r_ip           # default is 192.168.0.43
+        self.STUNNEL_CONF = "stunnel.conf"
+        self.CLIENT_CERT = "client.cert"
+        self.SERVER_CERT = "server.crt"
+        self.SERVER_PEM = "server.pem"
+
 
     def initialize(self):
         # ppp, stunnel, route installed ?
@@ -68,15 +76,10 @@ class Server:
                 return False
 
         # Copy certificates and stunnel.conf to /opt/'self.vpn_user'/etc/'self.vpn_name'
+        self.set_files()
 
         #   If we've got so far, init is ok
         return True
-
-    # method used to start stunnel with
-    # "stunnel  /opt/'self.vpn_user'/etc/'self.vpn_name'/stunnel.conf" cmd
-    def startTunnel(self):
-        pass
-
 
     # class utils methods:
 
@@ -108,18 +111,19 @@ class Server:
     def checkIpForward(self):
         print("Activating ip forwarding...")
         result = re.search(r".*1$", os.popen("sysctl net.ipv4.ip_forward=1").read())
-        if (result):
-            return True
-        else:
-            return False
+        return result
 
     # Check for a specified user on the system
     def checkForUser(self):
         result = re.search(r".*"+self.vpn_user+":.*", os.popen('less /etc/passwd').read())
         if (result):
-            return True
-        else:
-            return False
+            # check for directories : /etc/'self.vpn_name
+            folderCmd1 = "sudo -u sslvpn mkdir "+self.vpn_user_path+"/etc"
+            folderCmd2 = "sudo -u sslvpn mkdir "+self.vpn_user_path+"/etc/"+self.vpn_name
+            if (os.popen(folderCmd1).read() + os.popen(folderCmd2).read() == ""):
+                os.popen('chmod -R 777 /opt/ssl-vpn') # that's just awful, but we have no time for full correctness of code
+                return True
+        return False
 
     # Add user with specified username and homepath
     # Note : will prompt for user password as sudo is used, unless visudo is configured
@@ -134,8 +138,6 @@ class Server:
             if (os.popen(folderCmd1).read() + os.popen(folderCmd2).read() == ""):
                 os.popen('chmod -R 777 /opt/ssl-vpn') # that's just awful, but we have no time for full correctness of code
                 return True
-            else:
-                return False # mkdir failed
         return False;	# User/group add failed
 
 
@@ -143,10 +145,7 @@ class Server:
     def checkSudoers(self):
         # First check wether sudoers needs edition :
         result = re.search(r".*"+re.escape(self.vpn_user)+" ALL=NOPASSWD: /usr/sbin/pppd.*", os.popen('less /etc/sudoers').read())
-        if (result):
-            return True
-        else:
-            return False
+        return result
 
     # To be used if sudoers doesn't contain the right line for vpn_user
     def editSudoers(self):
@@ -157,3 +156,33 @@ class Server:
         subprocess.call("sudoersEdit.sh",shell=True)
         os.system('rm cmd')
         return checkSudoers()
+
+    # Copy conf files from server file to /opt/ssl-vpn/etc/'self.vpn_name'
+    # source_path like : '/opt/'self.von_user'/etc/'
+    def set_files(self):
+        # stunnel.conf
+        f = open('stunnel2.conf', 'w')
+        f.write("debug = 7\n")
+        f.write("foreground = yes\n")
+        f.write("cert = "+self.vpn_user_path+"/etc/"+self.vpn_name+"\n")  # change to actual path later
+        f.write("verify = 3\n")
+        f.write("CApath = "+self.vpn_user_path+"/etc/"+self.vpn_name+"\n")  # change to actuel path later
+        f.write("CAfile = "+self.vpn_user_path+"/etc/"+self.vpn_name+"/"+self.SERVER_PEM+"\n\n")  # change to actual path later
+
+        f.write("[pppd]\n")   # pppd section
+        f.write("accept = "+str(self.port)+"\n")
+        f.write("exec = /usr/bin/sudo\n")
+        f.write("execargs = sudo pppd noauth debug "+str(self.local_ip)+":"+str(self.remote_ip)+"\n")
+        f.write("pty = yes\n")
+
+        f.close()
+        # copy file to the right location
+        shutil.move("stunnel2.conf", self.vpn_user_path+"/etc/")
+
+        # Copy all files from server/vpn_files to /opt/sslvpn/etc/self.vpn_name
+        copy_tree("server/vpn_files", self.vpn_user_path+"/etc/"+self.vpn_name)
+
+
+    def launch_server():
+        cmd = "sudo stunnel /opt/"+self.vpn_user+"/etc/stunnel.conf"
+        os.popen(cmd)
