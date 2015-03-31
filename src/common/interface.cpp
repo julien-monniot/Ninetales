@@ -18,13 +18,13 @@ int prepare_tun(char* dev, int flags) {
 
     ifr.ifr_flags = flags;
     
-    if (sizeof(iname.c_str()) > IFNAMSIZ)
+    if (sizeof(dev) > IFNAMSIZ)
     {
-        std::cerr << str << std::endl;
+        std::cerr << "Error : interface name too long" << std::endl;
     }
     else 
     {
-        snprintf(ifr.ifr_name, IFNAMSIZ,"%s",  iname.c_str());
+        snprintf(ifr.ifr_name, IFNAMSIZ,"%s", dev);
     }
 
     std::cout << "Ifr flag and name filled" << std::endl;

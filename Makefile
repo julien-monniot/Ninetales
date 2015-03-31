@@ -2,9 +2,9 @@
 
 # CONFIGURATION:
 #    The project directories:
-DIRECTORIES=client/ server/ encryption/ utils/
+DIRECTORIES=client/ server/ encryption/ utils/ common/
 #    The project cpp files:
-CPPFILES=main.cpp client/client.cpp utils/argsmanager.cpp
+CPPFILES=main.cpp client/client.cpp utils/argsmanager.cpp common/interface.cpp
 #    The libraries includes (-I):
 LIBS_INCLUDES=
 #    The libraries (-L and -l):
