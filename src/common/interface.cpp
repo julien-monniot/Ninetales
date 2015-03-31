@@ -198,8 +198,8 @@ int SSL_run(SSL* ssl_net, SSL* ssl_tun)
             // plength = htons(nread);
             // nwrite = cwrite(net_fd, (char *)&plength, sizeof(plength));
             // nwrite = cwrite(net_fd, buffer, nread);
-            nread = SSL_read(ssl_tun, buffer, BUFSIZE);
-            SSL_write(ssl_net, buffer, nread);
+            SSL_read(ssl_tun, buffer, BUFSIZE);
+            SSL_write(ssl_net, buffer, BUFSIZE);
             std::cout << "TUN -> NET: " << nread << " bytes" << std::endl;
         }
 
@@ -208,11 +208,11 @@ int SSL_run(SSL* ssl_net, SSL* ssl_tun)
 
             // The peer stopped the connection
             // nread = read_n(net_fd, (char *)&plength, sizeof(plength));
-            nread = SSL_read(ssl_net, buffer, BUFSIZE);
-            if(nread == 0) {
+            SSL_read(ssl_net, buffer, BUFSIZE);
+            /*if(nread == 0) {
                 break;
-            }
-            SSL_write(ssl_tun, buffer, nread);
+            }*/
+            SSL_write(ssl_tun, buffer, BUFSIZE);
             //nread = read_n(net_fd, buffer, ntohs(plength));
             //nwrite = cwrite(tun_fd, buffer, nread);
             std::cout << "NET -> TUN: " << nread << " bytes" << std::endl;
