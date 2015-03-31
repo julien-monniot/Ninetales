@@ -71,7 +71,7 @@ int Server::Listen()
     
     // Bind
     int err;
-    if (err = bind(tmp_sock_fd, (struct sockaddr*) &local, sizeof(local)) < 0) {
+    if ((err = bind(tmp_sock_fd, (struct sockaddr*) &local, sizeof(local))) < 0) {
         std::cerr << "ERROR: Bind failed" << std::endl;
         return -1;
     }
@@ -94,6 +94,7 @@ int Server::Listen()
         std::cerr << "ERROR: While waiting for connecction" << std::endl;
         return -1;
     }
+    std::cout << remote.sin_addr.s_addr << std::endl;
     
     return tmp_net_fd;
 }
