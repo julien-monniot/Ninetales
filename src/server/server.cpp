@@ -75,6 +75,7 @@ int Server::Listen()
         return -1;
     }
     
+    std::cout << "Waiting for client to connect..." << std::endl;
     // Listen
     if (listen(tmp_sock_fd, 5) < 0) {
         std::cerr << "ERROR: While litening" << std::endl;
