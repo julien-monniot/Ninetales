@@ -198,10 +198,10 @@ int SSL_run(SSL* ssl_net, SSL* ssl_tun)
             // plength = htons(nread);
             // nwrite = cwrite(net_fd, (char *)&plength, sizeof(plength));
             // nwrite = cwrite(net_fd, buffer, nread);
-            nread = SSL_read(ssl_tun, buffer, BUFSIZE);
+            nread = SSL_read(ssl_tun, buffer, sizeof(buffer));
             if (nread > 0)
             {
-                SSL_write(ssl_net, buffer, BUFSIZE);
+                SSL_write(ssl_net, buffer, nread);
                 std::cout << "TUN -> NET: " << nread << " bytes" << std::endl;
             }
             else if (nread == 0)
@@ -223,10 +223,10 @@ int SSL_run(SSL* ssl_net, SSL* ssl_tun)
             /*if(nread == 0) {
                 break;
             }*/
-            nread = SSL_read(ssl_net, buffer, BUFSIZE);
+            nread = SSL_read(ssl_net, buffer, sizeof(buffer));
             if (nread > 0)
             {
-                SSL_write(ssl_tun, buffer, BUFSIZE);
+                SSL_write(ssl_tun, buffer, nread);
                 std::cout << "NET -> TUN" << std::endl;
             }
             else if (nread == 0)
