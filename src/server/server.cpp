@@ -91,10 +91,9 @@ int Server::Listen()
     // Wait for connection
     int tmp_net_fd;
     if ((tmp_net_fd = accept(tmp_sock_fd, (struct sockaddr*)&remote, &remotelen)) < 0) {
-        std::cerr << "ERROR: While waiting for connecction" << std::endl;
+        std::cerr << "ERROR: While waiting for connection" << std::endl;
         return -1;
     }
-    std::cout << remote.sin_addr.s_addr << std::endl;
     
     return tmp_net_fd;
 }
