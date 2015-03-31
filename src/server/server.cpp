@@ -1,78 +1,87 @@
 #include "server.h"
-
+#include "../common/interface.h"
 
 //-------------------------------------------------------------------------------- Constr - Destr
-Server::Server() : interface_fd(-1), iname("vpn-tun"), flags(IFF_TUN | IFF_NO_PI)
+Server::Server()
 {
 }
 
-Server::Server(std::string p_iname, int p_flags) : interface_fd(-1), iname(p_iname), flags(p_flags)
+Server::Server(char* p_iname, int p_flags, int port)
+    : tun_fd(-1), net_fd(-1), iname(p_iname), flags(p_flags), port(port), optval(1)
 {
+    
+    // Prepare the Tunneling Interface
+    if ((tun_fd = prepare_tun(iname, flags)) < 0) 
+    {
+        std::cerr << "ERROR: Preparing the tun interface" << std::endl;
+        exit(1);
+    }
+    std::cout << "Tun interface file descriptor" << std::endl;
+
+    // Prepare the Network Interface
+    if ( (net_fd = Listen()) < 0 )
+    {
+        std::cerr << "ERROR: Listening operation failed" << std::endl;
+        exit(1);
+    }
+    std::cout << "Client connected on port :" << port << std::endl;    
+
 }
 
 Server::~Server()
 {
-    
 }
 
 //-------------------------------------------------------------------------------- Public methods
-bool Server::ConnectInterface()
-{ 
-    std::cout << "Start of ConnectInterface()" << std::endl;
-    struct ifreq ifr;
-    int fd, err;    
-    std::string clonedev = "/dev/net/tun";
 
-    if( (fd = open(clonedev.c_str() , O_RDWR)) < 0 ) 
-    {
-        std::cerr << "Error when opening tun file" << std::endl;
-        return false;
-    }
-
-    std::cout << "File " << clonedev << " opened" << std::endl;
-
-    memset(&ifr, 0, sizeof(ifr));
-
-    ifr.ifr_flags = flags;
-    
-    try 
-    {
-        if (sizeof(iname.c_str()) > IFNAMSIZ)
-        {
-            throw new std::string("Erreur : interface name too long");
-        } else 
-	{
-           snprintf(ifr.ifr_name, IFNAMSIZ,"%s",  iname.c_str());
-        }
-    } 
-    catch ( std::string str ) 
-    {
-        std::cerr << str << std::endl;
-        return false;
-    }
-
-    std::cout << "Ifr flag and name filled" << std::endl;
-    
-    if( (err = ioctl(fd, TUNSETIFF, (void *)&ifr)) < 0 ) 
-    {
-        std::cerr << "Error when using ioctl TUNSETIFF" << std::endl;
-        close(fd);
-        return false;
-    }
-    //strcpy(dev, ifr.ifr_name);
-    
-    std::cout << "Iotcl ok" << std::endl;
-
-    // store fd value in member variable
-    this->interface_fd = fd;
-    
-    return true;
-}
-
-// debug : 
-int Server::getFd()
+int Server::GetTunFD()
 {
-    return this->interface_fd;
+    return tun_fd;
+}
+
+int Server::GetNetFD()
+{
+    return net_fd;
 }
 
 
+int Server::Listen()
+{
+    // Set socket options
+    if(setsockopt(net_fd, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval)) < 0) {
+        std::cerr << "ERROR: Setting socket options" << std::endl;
+        return -1;
+    }
+
+    // Initialize acceptation
+    struct sockaddr_in local;
+    memset(&local, 0, sizeof(local)); // Clean struct
+    local.sin_family = AF_INET; // IPv4
+    local.sin_addr.s_addr = htonl(INADDR_ANY); // Accept ny address...
+    local.sin_port = htons(port); // ... on this port
+    
+    // Bind
+    if (bind(net_fd, (struct sockaddr*) &local, sizeof(local)) < 0) {
+        std::cerr << "ERROR: Bind failed" << std::endl;
+        return -1;
+    }
+    
+    // Listen
+    if (listen(net_fd, 5) < 0) {
+        std::cerr << "ERROR: While litening" << std::endl;
+        return -1;
+    }
+    
+    // Define remote client
+    struct sockaddr_in remote;
+    socklen_t remotelen = sizeof(remote);
+    memset(&remote, 0, remotelen); // Clean struct
+    
+    // Wait for connection
+    if ((net_fd = accept(net_fd, (struct sockaddr*)&remote, &remotelen)) < 0) {
+        std::cerr << "ERROR: While waiting for connecction" << std::endl;
+        return -1;
+    }
+    
+    return 0;
+}

@@ -1,5 +1,5 @@
-#ifndef CLIENT_H
-#define CLIENT_H // Client.h
+#ifndef INTERFACE_H
+#define INTERFACE_H // Interface_H
 
 #include <iostream>
 #include <sys/ioctl.h> 
@@ -24,9 +24,13 @@
 #include <errno.h>
 #include <stdarg.h>
 
-int prepare_tun(char *dev, int flags);
-int cread(int fd, char *buf, int n);
-int cwrite(int fd, char *buf, int n);
-int read_n(int fd, char *buf, int n);
+#define BUFSIZE 2000   
 
-#endif // CLIENT_H
+extern int prepare_tun(char *dev, int flags);
+extern int cread(int fd, char *buf, int n);
+extern int cwrite(int fd, char *buf, int n);
+extern int read_n(int fd, char *buf, int n);
+extern int run(int net_fd, int tap_fd);
+
+
+#endif // Interface_H

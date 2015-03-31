@@ -1,5 +1,6 @@
 #include "interface.h"
 
+
 int prepare_tun(char* dev, int flags) {
     std::cout << "Start of ConnectInterface()" << std::endl;
     struct ifreq ifr;
@@ -78,7 +79,7 @@ int read_n(int fd, char *buf, int n)
     {
         if ((nread = cread(fd, buf, left)) == 0)
         {
-            return 0 ;      
+            return 0;      
         }else
         {
             left -= nread;
@@ -87,3 +88,67 @@ int read_n(int fd, char *buf, int n)
     }
     return n;  
 }
+
+int run(int net_fd, int tap_fd)
+{
+    char buffer[BUFSIZE];
+    int maxfd = (tap_fd > net_fd)? tap_fd : net_fd;
+
+    for(;;) {
+        uint16_t nread;
+        uint16_t nwrite;
+        uint16_t plength;
+        (void) nwrite;
+        int ret;
+        fd_set rd_set;
+
+        FD_ZERO(&rd_set);
+        FD_SET(tap_fd, &rd_set);
+        FD_SET(net_fd, &rd_set);
+
+        // Check the file descriptors
+        ret = select(maxfd + 1, &rd_set, NULL, NULL, NULL);
+
+        //    Interruption
+        if (ret < 0 && errno == EINTR){
+            std::cerr << "WARNING: Interruption" << std::endl;
+            continue; // Try again
+        }
+        //    File descriptor invalid
+        else if (ret < 0 && errno == EBADF){
+            std::cerr << "ERROR: File descriptor invalid" << std::endl;
+            return -1;
+        }
+        //    Other error
+        else if (ret < 0) {
+            std::cerr << "ERROR: Select()" << std::endl;
+            return -1;
+        }
+
+        // There is data from tun to send to the network
+        if(FD_ISSET(tap_fd, &rd_set)) {
+
+            nread = cread(tap_fd, buffer, BUFSIZE);
+            plength = htons(nread);
+            nwrite = cwrite(net_fd, (char *)&plength, sizeof(plength));
+            nwrite = cwrite(net_fd, buffer, nread);
+
+        }
+
+        // There is data from the network to send to tun
+        if(FD_ISSET(net_fd, &rd_set)) {
+
+            // The peer stopped the connection
+            nread = read_n(net_fd, (char *)&plength, sizeof(plength));
+            if(nread == 0) {
+                break;
+            }
+
+            nread = read_n(net_fd, buffer, ntohs(plength));
+            nwrite = cwrite(tap_fd, buffer, nread);
+        }
+    }
+    
+    return 0;
+}
+

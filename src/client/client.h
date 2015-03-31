@@ -27,16 +27,18 @@ class Client
 {
 public:
     Client();
-    Client(std::string, int);
+    Client(char* p_iname, int p_flags, int port, char* ip);
     ~Client();
     int ConnectServer();
+    int GetTunFD();
+    int GetNetFD();
 private:
-    int interface_fd;
-    int sock_fd;
-    std::string iname;
+    int tun_fd;
+    int net_fd;
+    char* iname;
     int flags;
     int port;                       // connection port
-    char remote_ip[16];            /* dotted quad IP string */
+    char* remote_ip;            /* dotted quad IP string */
 protected:
 
 };

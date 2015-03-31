@@ -1,5 +1,5 @@
-#ifndef CLIENT_H
-#define CLIENT_H // Client.h
+#ifndef SERVER_H
+#define SERVER_H // Server.h
 
 
 #include <iostream>
@@ -21,21 +21,26 @@
 #include <errno.h>
 #include <stdarg.h>
 
+#include "../common/interface.h"
 
 
-class Client
+class Server
 {
 public:
-    Client();
-    Client(std::string, int);
-    ~Client();
-    bool ConnectInterface();
-    int getFd();
+    Server();
+    Server(char* p_iname, int p_flags, int port);
+    ~Server();
+    int Listen();
+    int GetTunFD();
+    int GetNetFD();
 private:
-    int interface_fd;
-    std::string iname;
+    int tun_fd;
+    int net_fd;
+    char* iname;
     int flags;
+    int port; // listen port
+    int optval;
 protected:
 
 };
-#endif // CLIENT_H
+#endif // SERVER_H
