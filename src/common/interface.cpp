@@ -226,6 +226,7 @@ SSL_CTX* initCTX()
 {
     SSL_CTX *ctx;
 
+    SSL_library_init();
     OpenSSL_add_all_algorithms();
     SSL_load_error_strings();
     ctx = SSL_CTX_new(SSLv2_server_method());
