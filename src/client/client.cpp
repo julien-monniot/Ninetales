@@ -75,9 +75,10 @@ int Client::ConnectServer()
 
 int Client::SSLConnection()
 {
-    SSL_CTX* ctx = initCTX();
-    SSL* ssl_net = SSL_new(ctx);
-    SSL* ssl_tun = SSL_new(ctx);
+    SSL_CTX* ctx_net = initCTX();
+    SSL_CTX* ctx_tun = initCTX();
+    SSL* ssl_net = SSL_new(ctx_net);
+    SSL* ssl_tun = SSL_new(ctx_tun);
     SSL_set_fd(ssl_net, net_fd);
     SSL_set_fd(ssl_tun, tun_fd);
     if ( (SSL_connect(ssl_tun) < 0) || (SSL_connect(ssl_net) < 0) )
