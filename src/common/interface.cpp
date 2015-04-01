@@ -153,10 +153,9 @@ int run(int net_fd, int tun_fd)
     return 0;
 }
 
-int SSL_run(SSL* ssl_net, SSL* ssl_tun)
+int SSL_run(SSL* ssl_net, int tun_fd)
 {
     int net_fd = SSL_get_fd(ssl_net);
-    int tun_fd = SSL_get_fd(ssl_tun);
     char buffer[BUFSIZE];
     int maxfd = (tun_fd > net_fd)? tun_fd : net_fd;
 
@@ -194,15 +193,15 @@ int SSL_run(SSL* ssl_net, SSL* ssl_tun)
         // There is data from tun to send to the network
         if(FD_ISSET(tun_fd, &rd_set)) {
 
-            // nread = cread(tun_fd, buffer, BUFSIZE);
             // plength = htons(nread);
             // nwrite = cwrite(net_fd, (char *)&plength, sizeof(plength));
             // nwrite = cwrite(net_fd, buffer, nread);
-            nread = SSL_read(ssl_tun, buffer, sizeof(buffer));
+            //nread = SSL_read(ssl_tun, buffer, sizeof(buffer));
+            nread = cread(tun_fd, buffer, BUFSIZE);
             if (nread > 0)
             {
                 SSL_write(ssl_net, buffer, nread);
-                std::cout << "TUN -> NET: " << nread << " bytes" << std::endl;
+                std::cout << "TUN -> NET" << std::endl;
             }
             else if (nread == 0)
             {
@@ -226,7 +225,8 @@ int SSL_run(SSL* ssl_net, SSL* ssl_tun)
             nread = SSL_read(ssl_net, buffer, sizeof(buffer));
             if (nread > 0)
             {
-                SSL_write(ssl_tun, buffer, nread);
+                //SSL_write(ssl_tun, buffer, nread);
+                nwrite = cwrite(tun_fd, buffer, nread);
                 std::cout << "NET -> TUN" << std::endl;
             }
             else if (nread == 0)

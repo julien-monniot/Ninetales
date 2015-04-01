@@ -75,21 +75,17 @@ int Client::ConnectServer()
 
 int Client::SSLConnection()
 {
-    SSL_CTX* ctx_net = initCTX();
-    SSL_CTX* ctx_tun = initCTX();
-    SSL* ssl_net = SSL_new(ctx_net);
-    SSL* ssl_tun = SSL_new(ctx_tun);
-    SSL_set_fd(ssl_net, net_fd);
-    SSL_set_fd(ssl_tun, tun_fd);
-    if ( (SSL_connect(ssl_tun) < 0) || (SSL_connect(ssl_net) < 0) )
-    {
-        std::cerr << "Cannot connect SSL socket" << std::endl;
-        return -1;
-    }
-    std::cerr << "SSL TUN socket: " << std::endl;
-    std::cerr << "SSL NET socket: " << std::endl;
     
-    SSL_run(ssl_net, ssl_tun);
+    SSL_CTX* ctx_net = initCTX();
+    SSL* ssl_net = SSL_new(ctx_net);
+    SSL_set_fd(ssl_net, net_fd);
+    if ( SSL_connect(ssl_net) < 0 )
+    {
+        std::cerr << "ERROR: Cannot connect SSL socket" << std::endl;
+    }
+    std::cerr << "SSL NET socket connected" << std::endl;
+    
+    SSL_run(ssl_net, tun_fd);
     
     return 0;
 }
