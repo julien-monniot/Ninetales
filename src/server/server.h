@@ -20,7 +20,6 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <stdarg.h>
-
 #include "../common/interface.h"
 
 
@@ -31,9 +30,11 @@ public:
     Server(char* p_iname, int p_flags, int port);
     ~Server();
     int Listen();
-    int SSLConnection();
+    SSL* SSLConnection();
     int GetTunFD();
     int GetNetFD();
+    void Launch();
+    void SSLLaunch();
 private:
     int tun_fd;
     int net_fd;

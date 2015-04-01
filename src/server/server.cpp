@@ -1,5 +1,4 @@
 #include "server.h"
-#include "../common/interface.h"
 
 //-------------------------------------------------------------------------------- Constr - Destr
 Server::Server()
@@ -26,7 +25,6 @@ Server::Server(char* p_iname, int p_flags, int port)
     }
     std::cout << "Client connected on port :" << port << std::endl;    
 
-    //run(net_fd, tun_fd);
 }
 
 Server::~Server()
@@ -98,7 +96,7 @@ int Server::Listen()
     return tmp_net_fd;
 }
 
-int Server::SSLConnection()
+SSL* Server::SSLConnection()
 {
     SSL_CTX* ctx_net = initServerCTX();
     loadCertificates(ctx_net, "./bin/server.pem", "./bin/server.pem");
@@ -113,5 +111,16 @@ int Server::SSLConnection()
 
     SSL_run(ssl_net, tun_fd);
 
-    return 0;
+    return ssl_net;
+}
+
+void Server::SSLLaunch()
+{
+    SSL* ssl_net = SSLConnection();
+    SSL_run(ssl_net, tun_fd);
+}
+
+void Server::Launch()
+{
+    run(net_fd, tun_fd);
 }

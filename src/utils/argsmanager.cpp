@@ -21,7 +21,10 @@ ArgsManager::ArgsManager(int argc, const char* argv[]) :
         desc.add_options()
             ("init,i", "Enable the initialization operations")
             ("server,s", "Launch a server")
-            ("client,c", "Launch a client");
+            ("client,c", "Launch a client")
+            ("addess,a", po::value<std::string>(), "The connection ip")
+            ("port,s", po::value<int>(), "The listen/connection port")
+            ("no-encryption,n", "Disable the encryption");
         
         // Parse the options :
         po::store(po::command_line_parser(argc, argv).

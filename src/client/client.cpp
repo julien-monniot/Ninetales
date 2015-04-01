@@ -1,5 +1,4 @@
 #include "client.h"
-#include "../common/interface.h"
 
 //-------------------------------------------------------------------------------- Constr - Destr
 Client::Client()
@@ -26,7 +25,6 @@ Client::Client(char* p_iname, int p_flags, int port, char* ip)
     }
     std::cout << "Client connected to server at " << remote_ip << ":" << port << std::endl;    
 
-    //run(net_fd, tun_fd);
 }
 
 Client::~Client()
@@ -73,7 +71,7 @@ int Client::ConnectServer()
     return tmp_sock_fd;
 }
 
-int Client::SSLConnection()
+SSL* Client::SSLConnection()
 {
     
     SSL_CTX* ctx_net = initClientCTX();
@@ -90,4 +88,15 @@ int Client::SSLConnection()
     SSL_run(ssl_net, tun_fd);
     
     return 0;
+}
+
+void Client::SSLLaunch()
+{
+    SSL* ssl_net = SSLConnection();
+    SSL_run(ssl_net, tun_fd);
+}
+
+void Client::Launch()
+{
+    run(net_fd, tun_fd);
 }
