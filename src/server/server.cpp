@@ -103,11 +103,12 @@ int Server::SSLConnection()
     SSL_CTX* ctx_net = initCTX();
     SSL* ssl_net = SSL_new(ctx_net);
     SSL_set_fd(ssl_net, net_fd);
+    std::cout << "Waiting for SSL connection..." << std::endl;
     if ( SSL_accept(ssl_net) < 0 )
     {
         std::cerr << "ERROR: Cannot accept SSL socket connection" << std::endl;
     }
-    std::cerr << "SSL NET socket accepted" << std::endl;
+    std::cout << "SSL NET socket accepted" << std::endl;
 
     SSL_run(ssl_net, tun_fd);
 

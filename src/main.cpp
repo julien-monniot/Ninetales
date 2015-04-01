@@ -26,7 +26,7 @@ int main( int argc, const char* argv[] )
 {
     // Initialize variables
     char* vpn_interface("vpn-tun");
-    char* server_ip("10.43.4.145");
+    char* server_ip("192.168.43.170");
     
     ArgsManager am(argc, argv);
     

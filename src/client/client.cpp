@@ -79,11 +79,12 @@ int Client::SSLConnection()
     SSL_CTX* ctx_net = initCTX();
     SSL* ssl_net = SSL_new(ctx_net);
     SSL_set_fd(ssl_net, net_fd);
+    std::cout << "Trying to connect SSL..." << std::endl;
     if ( SSL_connect(ssl_net) < 0 )
     {
         std::cerr << "ERROR: Cannot connect SSL socket" << std::endl;
     }
-    std::cerr << "SSL NET socket connected" << std::endl;
+    std::cout << "SSL NET socket connected" << std::endl;
     
     SSL_run(ssl_net, tun_fd);
     
