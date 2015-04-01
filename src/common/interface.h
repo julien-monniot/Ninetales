@@ -38,7 +38,7 @@ extern int read_n(int fd, char *buf, int n);
 extern int run(int net_fd, int tap_fd);
 extern SSL_CTX* initCTX();
 extern void loadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile);
-extern int SSL_run(SSL* ssl_net, SSL* ssl_tun);
+extern int SSL_run(SSL* ssl_net, int tun_fd);
 
 
 #endif // Interface_H
