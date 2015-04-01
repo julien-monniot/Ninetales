@@ -87,7 +87,7 @@ SSL* Client::SSLConnection()
     
     SSL_run(ssl_net, tun_fd);
     
-    return 0;
+    return ssl_net;
 }
 
 void Client::SSLLaunch()
