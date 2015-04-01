@@ -198,9 +198,11 @@ int SSL_run(SSL* ssl_net, int tun_fd)
             // nwrite = cwrite(net_fd, buffer, nread);
             //nread = SSL_read(ssl_tun, buffer, sizeof(buffer));
             nread = cread(tun_fd, buffer, BUFSIZE);
+            std::cout << "cread(tun_fd, buffer, BUFSIZE): " << nread << std::endl;
             if (nread > 0)
             {
-                SSL_write(ssl_net, buffer, nread);
+                nwrite = SSL_write(ssl_net, buffer, nread);
+                std::cout << "SSL_write(ssl_net, buffer, nread): " << nread << std::endl;
                 std::cout << "TUN -> NET" << std::endl;
             }
             else if (nread == 0)
@@ -223,10 +225,12 @@ int SSL_run(SSL* ssl_net, int tun_fd)
                 break;
             }*/
             nread = SSL_read(ssl_net, buffer, sizeof(buffer));
+            std::cout << "SSL_read(ssl_net, buffer, sizeof(buffer)): " << nread << std::endl;
             if (nread > 0)
             {
                 //SSL_write(ssl_tun, buffer, nread);
                 nwrite = cwrite(tun_fd, buffer, nread);
+                std::cout << "cwrite(tun_fd, buffer, nread):" << nread << std::endl;
                 std::cout << "NET -> TUN" << std::endl;
             }
             else if (nread == 0)
