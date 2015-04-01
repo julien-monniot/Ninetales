@@ -23,7 +23,7 @@ ArgsManager::ArgsManager(int argc, const char* argv[]) :
             ("server,s", "Launch a server")
             ("client,c", "Launch a client")
             ("addess,a", po::value<std::string>(), "The connection ip")
-            ("port,s", po::value<int>(), "The listen/connection port")
+            ("port,p", po::value<int>(), "The listen/connection port")
             ("no-encryption,n", "Disable the encryption");
         
         // Parse the options :
