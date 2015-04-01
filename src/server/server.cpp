@@ -104,7 +104,7 @@ int Server::SSLConnection()
     SSL* ssl_net = SSL_new(ctx_net);
     SSL_set_fd(ssl_net, net_fd);
     std::cout << "Waiting for SSL connection..." << std::endl;
-    if ( SSL_accept(ssl_net) < 0 )
+    if ( SSL_connect(ssl_net) < 0 )
     {
         std::cerr << "ERROR: Cannot accept SSL socket connection" << std::endl;
     }
