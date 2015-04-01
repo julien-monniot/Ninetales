@@ -40,11 +40,6 @@ int main( int argc, const char* argv[] )
     
     TRACE("Ninetales - Another VPN Program\n")
     
-    if (am.count("address"))
-    {
-        server_ip = am["address"].as<char*>();
-    }
-    
     if (am.count("port"))
     {
         port = am["port"].as<int>();
