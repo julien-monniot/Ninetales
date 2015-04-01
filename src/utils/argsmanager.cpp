@@ -22,7 +22,7 @@ ArgsManager::ArgsManager(int argc, const char* argv[]) :
             ("init,i", "Enable the initialization operations")
             ("server,s", "Launch a server")
             ("client,c", "Launch a client")
-            ("addess,a", po::value<std::string>(), "The connection ip")
+            ("address,a", po::value<std::string>(), "The connection ip")
             ("port,p", po::value<int>(), "The listen/connection port")
             ("no-encryption,n", "Disable the encryption");
         
