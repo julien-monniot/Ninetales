@@ -76,8 +76,8 @@ int Client::ConnectServer()
 int Client::SSLConnection()
 {
     
-    SSL_CTX* ctx_net = initCTX();
-    loadCertificates(ctx_net, "./client.pem", "./client.pem");
+    SSL_CTX* ctx_net = initClientCTX();
+    loadCertificates(ctx_net, "./bin/client.pem", "./bin/client.pem");
     SSL* ssl_net = SSL_new(ctx_net);
     SSL_set_fd(ssl_net, net_fd);
     std::cout << "Trying to connect SSL..." << std::endl;

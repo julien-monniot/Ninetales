@@ -250,7 +250,24 @@ int SSL_run(SSL* ssl_net, int tun_fd)
     return 0;
 }
 
-SSL_CTX* initCTX()
+SSL_CTX* initClientCTX()
+{
+    SSL_CTX *ctx;
+
+    SSL_library_init();
+    OpenSSL_add_all_algorithms();
+    SSL_load_error_strings();
+    ctx = SSL_CTX_new(SSLv2_client_method());
+    if ( ctx == NULL )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    
+    return ctx;
+}
+
+SSL_CTX* initServerCTX()
 {
     SSL_CTX *ctx;
 

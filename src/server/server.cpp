@@ -100,12 +100,12 @@ int Server::Listen()
 
 int Server::SSLConnection()
 {
-    SSL_CTX* ctx_net = initCTX();
-    loadCertificates(ctx_net, "./server.pem", "./server.pem");
+    SSL_CTX* ctx_net = initServerCTX();
+    loadCertificates(ctx_net, "./bin/server.pem", "./bin/server.pem");
     SSL* ssl_net = SSL_new(ctx_net);
     SSL_set_fd(ssl_net, net_fd);
     std::cout << "Waiting for SSL connection..." << std::endl;
-    if ( SSL_connect(ssl_net) < 0 )
+    if ( SSL_accept(ssl_net) < 0 )
     {
         std::cerr << "ERROR: Cannot accept SSL socket connection" << std::endl;
     }

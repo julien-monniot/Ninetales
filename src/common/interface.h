@@ -36,7 +36,8 @@ extern int cread(int fd, char *buf, int n);
 extern int cwrite(int fd, char *buf, int n);
 extern int read_n(int fd, char *buf, int n);
 extern int run(int net_fd, int tap_fd);
-extern SSL_CTX* initCTX();
+extern SSL_CTX* initClientCTX();
+extern SSL_CTX* initServerCTX();
 extern void loadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile);
 extern int SSL_run(SSL* ssl_net, int tun_fd);
 
