@@ -101,6 +101,7 @@ int Server::Listen()
 int Server::SSLConnection()
 {
     SSL_CTX* ctx_net = initCTX();
+    loadCertificates(ctx_net, "./server.pem", "./server.pem");
     SSL* ssl_net = SSL_new(ctx_net);
     SSL_set_fd(ssl_net, net_fd);
     std::cout << "Waiting for SSL connection..." << std::endl;
